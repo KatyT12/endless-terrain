@@ -1,0 +1,83 @@
+{
+   "perlinnoise" : 
+   {
+      "bias" : 1.6,
+      "octaves" : 8,
+      "seed" : 121232
+      },
+   "dimensions":
+   {
+      "x":400,
+      "y":400,
+      "max_height":100,
+      "posX": 0,
+      "posY": 0,
+      "offset":0.4,
+      
+      "collisionOffset": 0.45,
+
+      "primitive": "GL_TRIANGLES",
+
+      "trees": true,
+      "grid":
+      {
+         "chancePerGrid": 8,
+         "maxNumInGrid": 1,
+         "treeModel": "res/models/tree.obj",
+         "treeShader": "res/shaders/tree.shader",
+         "treeUniformBufferForProjAndView": true,
+         
+         "instancing": true,
+
+         "gridX": 30,
+         "gridY": 30
+      }
+   },
+   "colors":
+   {
+      "staticColor": false,
+      
+      "texture": false, 
+      "textureLocation": "res/textures/terrainGrass.jpg",
+      "textureSlot": 2,
+      
+      "textureRepeat": true,
+      "textureRepeatConfig":
+      {
+         "xTextureRepeatOffset": 50.0,
+         "yTextureRepeatOffset": 50.0
+      },
+
+      "color1": [0.5,0.8,0.3],
+      "color2": [0.8,0.3,0.2]
+   },
+   
+   "genNormals": true,
+   "lighting":
+   {
+      "perFaceNormals": false
+   },
+   
+   "waterPresent": true,
+   "water":
+   {
+      "waterY": -38,
+      "waterColor": [0,0.4,0.7]   
+   },
+
+   "shader":
+   {
+      "shaderLocation": "res/shaders/terrainLightingDirectional.shader",
+      "textureUniformName": "u_Texture",
+      "uniformBufferForProjAndView": true,
+      "geometryShader": false
+   },
+
+   "matrices":
+   {
+      "model": [1,0,0,0,
+               0,1,0,-70,
+               0,0,1,0,
+               0,0,0,1]
+   }
+}
