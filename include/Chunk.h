@@ -21,7 +21,7 @@ class Chunk
         Chunk(Config* config, int posX, int posY);
         ~Chunk();
         
-        void init(); 
+        void init(float* pMap=nullptr); 
         
         void setTreeModel(Model* tree){treeModel = tree;}
 
@@ -55,9 +55,9 @@ class Chunk
         Model* treeModel;
         std::vector<glm::mat4> treeModelMatrices;
 
+        uint32_t seed;
 
     private:
-        uint32_t seed;
 
         void read_config_file(std::string& name);
         float interpolateFloat(float color1, float color2, float fraction);

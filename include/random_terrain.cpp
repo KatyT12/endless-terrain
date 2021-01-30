@@ -12,8 +12,8 @@ Terrain::Terrain(std::string config_file)
         read_config_file(config_file);
     }
     
-    length = config_struct.y * config_struct.offset;
-    width = config_struct.x * config_struct.offset;
+    int length = config_struct.y * config_struct.offset;
+    int width = config_struct.x * config_struct.offset;
 
     if(config_struct.texture)
     {
@@ -236,9 +236,9 @@ void Terrain::init()
     }
 
     genNewChunk(-1,0);
-    genNewChunk(0,-1);
-    genNewChunk(-1,-1);
     genNewChunk(0,0);
+    genNewChunk(-1,-1);
+    genNewChunk(0,-1);
 
     if(config_struct.trees && config_struct.instancing)
     {
@@ -397,6 +397,7 @@ void Terrain::genNewChunk(int x, int y)
     }
 
     chunkPositions.push_back({x,y});
+    //firstGen(chunks);
     chunks[n]->init();
     
 }
@@ -614,4 +615,114 @@ void Terrain::checkBounds()
     }
    
 }
+
+
+void Terrain::firstGen(std::vector<Chunk*> newChunks)
+{
+    std::vector<float*> maps;
+
+    for(Chunk* ch : newChunks)
+    {
+        setLehmer(ch->seed);
+        float* seeds = new float[config_struct.x * config_struct.y*4];
+        for(int i =0;i<config_struct.x*config_struct.y*4;i++)
+        {
+            seeds[i] = randdouble(0,1);
+        }
+        float* temp = new float[config_struct.x * config_struct.y*4];
+        perlInNoise2D(config_struct.x*2,config_struct.y*2,seeds,config_struct.octaves,config_struct.bias,temp);
+        maps.push_back(temp);
+        delete seeds;
+    }
+
+    float* averagedMap = new float[config_struct.x * config_struct.y * 4];
+    for(int i=0; i < config_struct.x * config_struct.y * 4;i++)
+    {
+        float val = 0.0f;
+        for(int j=0; j < maps.size();j++)
+        {
+            val += maps[j][i];
+        }
+        averagedMap[i] = val/(float)maps.size();
+    }
+
+    for(int i=0;i<maps.size();i++)
+    {
+        delete[] maps[i];
+    }
+
+    std::vector<float*> newMaps;
+   
+    newMaps = split(averagedMap,config_struct.x*2,config_struct.y*2);
+
+    delete[] averagedMap;
+
+    for(int i=0;i<newChunks.size();i++)
+    {
+        newChunks[i]->init(newMaps[i]);
+    }
+
+    for(int i=0;i < newMaps.size();i++)
+    {
+        delete[] newMaps[i];
+    }
+}
+
+std::vector<float*> Terrain::split(float* buffer,int width, int length)
+{
+    float* tl = new float[(int)(width*length * 0.25f)];
+    float* tr = new float[(int)(width*length * 0.25f)];
+    float* bl = new float[(int)(width*length * 0.25f)];
+    float* br = new float[(int)(width*length * 0.25f)];
+
+    int place = 0;
+    for(int x=0; x < width/2;x++)
+    {
+        for(int y = length/2; y < length;y++)
+        {
+            tl[place] = buffer[x*length + y];;
+            place++;
+        }
+    }
+
+    place = 0;
+    for(int x=width/2; x < width;x++)
+    {
+        for(int y = length/2; y < length;y++)
+        {
+            tr[place] = buffer[x*length + y];;
+            place++;
+        }
+    }
+
+    place = 0;
+    for(int x=0; x < width/2;x++)
+    {
+        for(int y = 0; y < length/2;y++)
+        {
+            bl[place] = buffer[x*length + y];
+            place++;
+        }
+    }
+    
+    place = 0;
+    for(int x=width/2; x < width;x++)
+    {
+        for(int y = 0; y < length/2;y++)
+        {
+            br[place] = buffer[x*length + y];;
+            place++;
+        }
+    }
+
+    std::vector<float*> s = {tl,tr,bl,br};
+    return s;
+
+}
+
+void Terrain::genChunkBuffer(std::vector<Chunk*> newChunks)
+{
+
+}
+
 

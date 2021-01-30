@@ -35,8 +35,8 @@ class Terrain
         inline bool treesPresent()const {return config_struct.trees;}
         inline void setCameraPos(glm::vec3* pos){camPos = pos;}
 
-        float length;
-        float width;
+        //float length;
+        //float width;
         Texture terrainTexture;
         shader terrainShader;
         shader treeShader;
@@ -67,6 +67,11 @@ class Terrain
         std::vector<glm::vec2> chunkPositions;
 
         std::vector<Chunk*>chunks;
+
+
+        void genChunkBuffer(std::vector<Chunk*> newChunks);
+        void firstGen(std::vector<Chunk*> newChunks);
+        std::vector<float*> split(float* buffer,int width, int length);
 
         Model tree;
         void genTreeModelBuffer();

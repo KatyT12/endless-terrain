@@ -16,26 +16,36 @@ Chunk::~Chunk()
 }
 
 
-void Chunk::init()
+void Chunk::init(float* pMap)
 {
-
-    setLehmer((uint32_t) seed);
+    float* map;
+    float* seeds;
+    if(pMap == nullptr)
+    {
+        setLehmer((uint32_t) seed);
     
    
-    float* map = new float[config_struct->x * config_struct->y];
-    float* seeds = new float[config_struct->x * config_struct->y];
+        map = new float[config_struct->x * config_struct->y];
+        seeds = new float[config_struct->x * config_struct->y];
     
-    for(int i = 0; i < config_struct->x*config_struct->y;i++)
-    {
-        //seeds[i] = (float)rand() / (float)RAND_MAX; b
-        seeds[i] = randdouble(0.0,1.0);
+        for(int i = 0; i < config_struct->x*config_struct->y;i++)
+        {
+            //seeds[i] = (float)rand() / (float)RAND_MAX; b
+            seeds[i] = randdouble(0.0,1.0);
+        }
+
+        perlInNoise2D(config_struct->x,config_struct->y,seeds,config_struct->octaves,config_struct->bias,map);
+
+    }
+    else{
+        map = pMap;
     }
 
+    
+
+
+
     int attribIndex =1;
-
-    perlInNoise2D(config_struct->x,config_struct->y,seeds,config_struct->octaves,config_struct->bias,map);
-
-
     int stride = getStride();
 
     float *vbChunk = new float[detVbSize()];
@@ -99,11 +109,12 @@ void Chunk::init()
         genTerrainTrees();
     }
 
-
-    delete map;
-    delete seeds;
-
-
+    if(pMap == nullptr)
+    {
+        delete map;
+        delete seeds;
+    }
+ 
     delete vbChunk;
     if(genIB) delete chunkIB;
 
