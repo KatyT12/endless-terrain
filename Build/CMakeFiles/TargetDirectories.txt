@@ -1,4 +1,0 @@
-/home/katy/programming/opengl/terrain/conf/four/Build/CMakeFiles/rebuild_cache.dir
-/home/katy/programming/opengl/terrain/conf/four/Build/CMakeFiles/edit_cache.dir
-/home/katy/programming/opengl/terrain/conf/four/Build/CMakeFiles/main.dir
-/home/katy/programming/opengl/terrain/conf/four/Build/CMakeFiles/LibsModule.dir
