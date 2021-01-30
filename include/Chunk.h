@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Water.h"
 #include "terrainConfig.h"
-
+#include "PerlinNoise.h"
 
 class Chunk
 {

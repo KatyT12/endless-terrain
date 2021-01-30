@@ -1,9 +1,9 @@
 {
    "perlinnoise" : 
    {
-      "bias" : 1.6,
-      "octaves" : 8,
-      "seed" : 121232
+      "bias" : 2,
+      "octaves" : 3,
+      "seed" : 121233
       },
    "dimensions":
    {

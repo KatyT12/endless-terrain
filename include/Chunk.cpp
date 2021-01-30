@@ -19,23 +19,49 @@ Chunk::~Chunk()
 void Chunk::init(float* pMap)
 {
     float* map;
-    float* seeds;
     if(pMap == nullptr)
     {
-        setLehmer((uint32_t) seed);
+        setLehmer((uint32_t) config_struct->seed);
+        
+        
+        PerlinNoise p;
+        p.SetRandomSeed(config_struct->seed);
+        p.SetAmplitude(1);
+        p.SetOctaves(config_struct->octaves);
+        p.SetFrequency(1);
+        p.SetPersistence(1/config_struct->bias);
     
-   
         map = new float[config_struct->x * config_struct->y];
-        seeds = new float[config_struct->x * config_struct->y];
     
-        for(int i = 0; i < config_struct->x*config_struct->y;i++)
+        float* seeds = new float[config_struct->x*config_struct->y];
+        float* output = new float[config_struct->x*config_struct->y];
+        
+        for(int i=0; i < config_struct->x * config_struct->y;i++)
         {
-            //seeds[i] = (float)rand() / (float)RAND_MAX; b
-            seeds[i] = randdouble(0.0,1.0);
+            seeds[i] = randdouble(0,1);
         }
 
-        perlInNoise2D(config_struct->x,config_struct->y,seeds,config_struct->octaves,config_struct->bias,map);
+        perlInNoise2D(config_struct->x,config_struct->y,seeds,config_struct->octaves+4,config_struct->bias-0.6,output);
 
+       for(int x =0; x < config_struct->x;x++)
+       {
+            for(int y =0; y < config_struct->y;y++)
+            {
+                float divisor = 1.0f;
+                float val = p.GetHeight((x + gridPosX*config_struct->x)*0.004,(y + gridPosY*config_struct->y)*0.004) + 0.5;
+                
+                float add = output[x*config_struct->y + y] * val; 
+                val += add; 
+
+                val /= 2;
+               
+                map[x * config_struct->y + y] = val;//p.GetHeight((x + gridPosX*config_struct->x)*0.004,(y + gridPosY*config_struct->y)*0.004) + 0.5;
+
+            }
+       }
+
+        delete seeds;
+        delete output;
     }
     else{
         map = pMap;
@@ -112,7 +138,6 @@ void Chunk::init(float* pMap)
     if(pMap == nullptr)
     {
         delete map;
-        delete seeds;
     }
  
     delete vbChunk;
@@ -162,8 +187,8 @@ float Chunk::getTerrainHeight(float x, float y)
 {
     /* Multiplying the -1 by the y and by the posY is to flip the z because yk opengl be facing the negative z. If you decide to not do the flipping remember to get rid of them*/
 
-    float localX =  x - (float)config_struct->posX - (gridPosX*config_struct->offset * (float)config_struct->x);
-    float localY =  y - (float)config_struct->posY*-1 - (gridPosY*config_struct->offset * (float)config_struct->y);
+    float localX =  x - (float)config_struct->posX - (gridPosX*config_struct->offset * ((float)config_struct->x-1));
+    float localY =  y - (float)config_struct->posY*-1 - (gridPosY*config_struct->offset * ((float)config_struct->y-1));
 
 
     float squareSize = width * length / config_struct->y - 1;
@@ -269,7 +294,7 @@ void Chunk::determineTexAttrib(float*& buffer,int x, int y, int place)
 
 glm::mat4 Chunk::getTerrainModelMatrix()
 {
-    return glm::translate(config_struct->modelMatrix,glm::vec3(config_struct->offset*config_struct->x*gridPosX,0.0f,config_struct->offset*config_struct->y*gridPosY*-1));
+    return glm::translate(config_struct->modelMatrix,glm::vec3(config_struct->offset*(config_struct->x-1)*gridPosX,0.0f,config_struct->offset*(config_struct->y-1)*gridPosY*-1));
 }
 
 
