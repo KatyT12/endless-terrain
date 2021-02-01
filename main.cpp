@@ -1,7 +1,3 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <thread>
 
 #include "include/renderer.h"
 #include "include/shader.h"
@@ -12,7 +8,7 @@
 
 #include "include/random_terrain.h"
 #include "include/Water.h"
-
+#include "include/Window.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -70,56 +66,18 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 int main(void)
 {
 
-    GLFWwindow* window;
-
-    if (!glfwInit())
-        return -1;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);  
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);   
-	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
-	
-    //Antialiasing
-    glfwWindowHint(GLFW_SAMPLES, 4);
-	
-    window = glfwCreateWindow(960, 540, "Random terrain", NULL, NULL);
-    
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-
-
-    glfwMakeContextCurrent(window);
-    
-    //This should fit our monitors refresh rate or whatever
-    glfwSwapInterval(1);
- 
+    std::string title = "Procedurally generated terrain";
+    Window w((uint32_t)960,(uint32_t)540,title);
+    GLFWwindow* window = w.GetWindow();
     glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window,mouse_callback);
     glfwSetScrollCallback(window,scroll_callback);
 
-
-    if(glewInit() != GLEW_OK)
-    {
-	    std::cout << "Error!" << std::endl;
-    }	    
-	
-
+    GLCall(glEnable(GL_MULTISAMPLE));
     GLCall(glEnable(GL_DEPTH_TEST));
-    GLCall(glDepthFunc(GL_LESS));
-
-    glEnable(GL_MULTISAMPLE);
-
-
-    
-    printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION));
-    
-
 	GLCall(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA));
 	GLCall(glEnable(GL_BLEND)); 
+    glViewport(0,0,960,540);
 
     {
    
@@ -128,6 +86,7 @@ int main(void)
 
 
     Terrain terrain = Terrain("test.json");
+
     terrain.setCameraPos(&camera.Position);
     terrain.init();
     //Telling the camera to try and detect collisions. This is very rough and only detects if there is a collision when the forward button is pressed (not any other button) but it is getting there
