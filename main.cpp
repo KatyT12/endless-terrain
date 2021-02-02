@@ -38,7 +38,7 @@ bool spacePressed = false;
 
 void mouse_callback(GLFWwindow* window, double mouseX, double mouseY)
 {
-	if (firstMouse)
+   if (firstMouse)
     {
         lastX = mouseX;
         lastY = mouseY;
@@ -73,11 +73,12 @@ int main(void)
     glfwSetCursorPosCallback(window,mouse_callback);
     glfwSetScrollCallback(window,scroll_callback);
 
-    GLCall(glEnable(GL_MULTISAMPLE));
     GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA));
 	GLCall(glEnable(GL_BLEND)); 
     glViewport(0,0,960,540);
+    GLCall(glEnable(GL_MULTISAMPLE));
+
 
     {
    
@@ -128,7 +129,6 @@ int main(void)
     while(!glfwWindowShouldClose(window)){
 
 
-	    GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 
 		
 		float currentFrame = glfwGetTime();
@@ -141,9 +141,8 @@ int main(void)
 		
         renderer.setproj(proj);
         renderer.setView(view);
-        renderer.DrawScene();
 
-
+        w.Run(&renderer);
         
         if(spacePressed)
         {
@@ -154,9 +153,6 @@ int main(void)
 
         
         terrain.checkBounds();
-        glfwSwapBuffers(window);
-
-        glfwPollEvents();
 	    processInput(window);
 
 

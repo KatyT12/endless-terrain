@@ -10,7 +10,7 @@
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);  
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);   
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
-       
+        glfwWindowHint(GLFW_SAMPLES, 4);
         glViewport(0,0,width,height);
 
         window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
@@ -44,18 +44,19 @@
 
     }
 
-    bool Window::Run()
+    bool Window::Run(sceneRenderer* renderer)
     {
         if(glfwWindowShouldClose(window))
         {
             return true;
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        if(glIsEnabled(GL_DEPTH_TEST))glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        else glClear(GL_COLOR_BUFFER_BIT);
+        
+        renderer->DrawScene();
 
         glfwSwapBuffers(window);
-
-
         glfwPollEvents();
         return false;
     }

@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <thread>
 #include "renderer.h"
+#include "sceneRenderer.h"
 
     class Window
     {
@@ -13,7 +14,7 @@
             Window();
             ~Window();
             GLFWwindow* GetWindow();
-            bool Run();
+            bool Run(sceneRenderer* renderer);
         
         private:
             GLFWwindow* window;
